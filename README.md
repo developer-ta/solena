@@ -2,14 +2,46 @@
 
 Solena is the public vitrine for an AI-assisted software development workflow.
 
-## Public scope
+It presents the project clearly on GitHub while keeping the sensitive working material in a separate private repository.
 
-- a clean GUI entry point
-- a clear explanation of the workflow
-- a visible architecture for the project
-- no sensitive dialogue history
+## What this repo is
 
-## Private scope
+- a clean public face for Solena
+- a small GUI landing page
+- a high-level explanation of the workflow
+- a visible, professional project identity
+
+## What this repo is not
+
+- it is not the private working memory
+- it is not the raw dialogue archive
+- it is not the internal governance layer
+
+## Public features
+
+- a responsive landing page
+- a clear project statement
+- a visible workflow overview
+- a clean structure for GitHub
+
+## Tech stack
+
+- HTML
+- CSS
+- JavaScript
+
+## Run locally
+
+Open `index.html` in a browser.
+
+## Project structure
+
+- `index.html` main entry point
+- `styles.css` visual design
+- `app.js` light interaction
+- `SOLENA_REPOSITORIES.md` public/private split map
+
+## Private core
 
 The private core lives in `private-core/` and contains:
 
@@ -18,13 +50,6 @@ The private core lives in `private-core/` and contains:
 - governance rules
 - versioning material
 - lab modules
-
-## Public structure
-
-- `index.html`
-- `styles.css`
-- `app.js`
-- `README.md`
 
 ## Positioning
 
