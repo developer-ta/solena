@@ -9,11 +9,23 @@ ROOT_DIR = Path(__file__).resolve().parents[1]
 VENV_DIR = ROOT_DIR / ".venv"
 DESKTOP_APP = ROOT_DIR / "desktop_app" / "main.py"
 DESKTOP_REQUIREMENTS = ROOT_DIR / "desktop_app" / "requirements.txt"
-PACKAGE_JSON = ROOT_DIR / "package.json"
 
 
 def banner() -> None:
     print("=" * 68)
+
+
+def command_version(command: str) -> str | None:
+    try:
+        result = subprocess.check_output(
+            [command, "--version"],
+            stderr=subprocess.STDOUT,
+            text=True,
+            creationflags=(0 if os.name != "nt" else subprocess.CREATE_NO_WINDOW),
+        )
+        return result.strip()
+    except Exception:
+        return None
     print("      SOLENA APP LAUNCHER - 1 CLIC DEMARRER")
     print("      Guided startup for the Solena desktop MVP")
     print("=" * 68)
@@ -39,8 +51,16 @@ def ensure_virtualenv() -> Path:
     return target_python
 
 
+def ensure_python_toolchain(python_exe: Path) -> None:
+    print("[PHASE 1] Checking Python toolchain...")
+    python_version = command_version(str(python_exe))
+    if python_version is None:
+        raise RuntimeError("Python interpreter unavailable in the target environment.")
+
+    print(f"[OK] Python ready: {python_version}")
+
 def ensure_python_dependencies(python_exe: Path) -> None:
-    print("[PHASE 1] Checking Python dependencies...")
+    print("[PHASE 2] Checking Python dependencies...")
     try:
         subprocess.check_call(
             [str(python_exe), "-c", "import PyQt6"],
@@ -58,25 +78,45 @@ def ensure_python_dependencies(python_exe: Path) -> None:
     print("[OK] Python dependencies installed.")
 
 
+def discover_js_workspaces() -> list[Path]:
+    workspaces: list[Path] = []
+    for package_json in ROOT_DIR.rglob("package.json"):
+        if "node_modules" in package_json.parts:
+            continue
+        workspaces.append(package_json.parent)
+    return sorted(set(workspaces))
+
+
 def ensure_js_dependencies() -> None:
-    if not PACKAGE_JSON.exists():
-        print("[PHASE 2] No JavaScript project detected. Skipping JS setup.")
+    workspaces = discover_js_workspaces()
+    if not workspaces:
+        print("[PHASE 3] No JavaScript workspace detected. Skipping JS setup.")
         return
 
-    node_modules = ROOT_DIR / "node_modules"
+    node_version = command_version("node")
+    npm_version = command_version("npm")
+    if node_version is None or npm_version is None:
+        raise RuntimeError("Node.js/npm are required because a JavaScript workspace was detected.")
+
+    print(f"[OK] Node ready: {node_version}")
+    print(f"[OK] npm ready: {npm_version}")
+
     npm_cmd = "npm.cmd" if os.name == "nt" else "npm"
 
-    if node_modules.exists():
-        print("[OK] JavaScript dependencies already present.")
-        return
+    for workspace in workspaces:
+        node_modules = workspace / "node_modules"
+        package_json = workspace / "package.json"
+        if node_modules.exists():
+            print(f"[OK] JavaScript dependencies already present: {workspace}")
+            continue
 
-    print("[PHASE 2] Installing JavaScript dependencies...")
-    subprocess.check_call([npm_cmd, "install"], cwd=str(ROOT_DIR), shell=True)
-    print("[OK] JavaScript dependencies installed.")
+        print(f"[PHASE 3] Installing JavaScript dependencies in {workspace}...")
+        subprocess.check_call([npm_cmd, "install"], cwd=str(workspace), shell=True)
+        print(f"[OK] JavaScript dependencies installed in {workspace}.")
 
 
 def start_desktop_app(python_exe: Path) -> subprocess.Popen:
-    print("[PHASE 3] Launching Solena desktop MVP...")
+    print("[PHASE 4] Launching Solena desktop MVP...")
     return subprocess.Popen([str(python_exe), str(DESKTOP_APP)], cwd=str(ROOT_DIR))
 
 
@@ -87,9 +127,15 @@ def main() -> None:
         print(f"[ERROR] Desktop app not found: {DESKTOP_APP}")
         sys.exit(1)
 
-    python_exe = ensure_virtualenv()
-    ensure_python_dependencies(python_exe)
-    ensure_js_dependencies()
+    try:
+        python_exe = ensure_virtualenv()
+        ensure_python_toolchain(python_exe)
+        ensure_python_dependencies(python_exe)
+        ensure_js_dependencies()
+    except Exception as exc:
+        print(f"[ERROR] Startup validation failed: {exc}")
+        input("Press Enter to exit...")
+        sys.exit(1)
 
     process = start_desktop_app(python_exe)
     print("[READY] Solena is running. Leave this window open.")
