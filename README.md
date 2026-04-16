@@ -81,6 +81,10 @@ The build flow:
 
 See `release/README.md` for the exact build steps.
 
+## Planning
+
+See [`PLAN.md`](PLAN.md) for the current roadmap, what remains to do, and the final direction of the project.
+
 ## Private core
 
 The private core lives in `private-core/` and contains:
