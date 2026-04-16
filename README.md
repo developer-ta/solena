@@ -23,6 +23,7 @@ It presents the project clearly on GitHub while keeping the sensitive working ma
 - a clear project statement
 - a visible workflow overview
 - a clean structure for GitHub
+- a desktop MVP entry point for importing dialogue folders
 
 ## Tech stack
 
@@ -39,7 +40,23 @@ Open `index.html` in a browser.
 - `index.html` main entry point
 - `styles.css` visual design
 - `app.js` light interaction
+- `desktop_app/` PyQt6 desktop MVP
 - `SOLENA_REPOSITORIES.md` public/private split map
+
+## Desktop MVP
+
+Solena also ships with a small PyQt6 desktop entry point:
+
+- choose the private core folder
+- import a folder of dialogues
+- load the GPS and pipeline guide
+- preview a structured JSON result
+
+Run it with:
+
+```bash
+python desktop_app/main.py
+```
 
 ## Private core
 
