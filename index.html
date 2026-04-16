@@ -34,6 +34,57 @@
         </div>
       </header>
 
+      <section class="panel import-panel" aria-labelledby="import-title">
+        <div class="section-heading compact">
+          <span>Importer</span>
+          <h2 id="import-title">Charge un dossier de dialogues et lance l'analyse.</h2>
+        </div>
+        <div class="import-grid">
+          <label class="file-drop">
+            <input id="dialogue-input" type="file" webkitdirectory directory multiple />
+            <strong>Importer un dossier</strong>
+            <span>Dialogue, notes, ressources liées au projet</span>
+          </label>
+          <label class="prompt-box">
+            <span>Prompt prêt</span>
+            <textarea id="prompt-input" rows="8" readonly>1. Lire project_gps.json
+2. Lire pipeline_guide.json
+3. Charger la gouvernance
+4. Analyser les dialogues
+5. Produire une version structurée
+6. Signaler les risques
+7. Proposer la prochaine étape</textarea>
+          </label>
+        </div>
+        <div class="import-actions">
+          <button class="button button-primary" id="analyze-btn" type="button">Analyser avec Solena</button>
+          <button class="button button-secondary" id="reset-btn" type="button">Réinitialiser</button>
+        </div>
+        <div class="import-status" id="import-status">Aucun dossier importé pour le moment.</div>
+      </section>
+
+      <section class="panel pipeline-output" aria-labelledby="output-title">
+        <div class="section-heading compact">
+          <span>Résultat</span>
+          <h2 id="output-title">Aperçu du pipeline de traitement.</h2>
+        </div>
+        <div class="output-grid">
+          <article class="output-card">
+            <h3>Fichiers détectés</h3>
+            <p id="files-count">0 fichier</p>
+          </article>
+          <article class="output-card">
+            <h3>État</h3>
+            <p id="pipeline-state">En attente d’import.</p>
+          </article>
+          <article class="output-card">
+            <h3>Prochaine étape</h3>
+            <p id="next-step">Importer un dossier de dialogues.</p>
+          </article>
+        </div>
+        <div class="output-details" id="output-details"></div>
+      </section>
+
       <section class="panel stats">
         <div>
           <span class="stat-label">Mode</span>
