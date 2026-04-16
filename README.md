@@ -58,6 +58,16 @@ Run it with:
 python desktop_app/main.py
 ```
 
+## One-click launcher
+
+For a more guided startup, use the launcher in `app_launcher/`.
+
+It checks the Python environment, prepares the desktop dependencies, and starts the desktop MVP automatically.
+
+```bash
+python app_launcher/1_CLIC_DEMARRER_SOLENA.py
+```
+
 ## Private core
 
 The private core lives in `private-core/` and contains:
