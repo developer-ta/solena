@@ -30,3 +30,10 @@ The private core lives in `private-core/` and contains:
 
 The public repo shows the project identity and its method at a high level.
 The private core keeps the deeper knowledge, drafts, and experimental material separate.
+
+## Repository split
+
+- public repo: visible vitrine, GUI, and high-level explanation
+- private repo: sensitive workflow, dialogues, governance, and lab material
+
+See [`SOLENA_REPOSITORIES.md`](SOLENA_REPOSITORIES.md) for the exact split.
