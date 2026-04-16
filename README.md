@@ -68,6 +68,19 @@ It checks the Python environment, prepares the desktop dependencies, and starts 
 python app_launcher/1_CLIC_DEMARRER_SOLENA.py
 ```
 
+## Windows packaging
+
+To build a distributable Windows executable, use the release scripts in `release/`.
+
+The build flow:
+
+1. create or reuse the Python virtual environment
+2. install packaging dependencies
+3. build the desktop app with PyInstaller
+4. collect the executable in `release/dist/`
+
+See `release/README.md` for the exact build steps.
+
 ## Private core
 
 The private core lives in `private-core/` and contains:

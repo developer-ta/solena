@@ -6,3 +6,7 @@ dist/
 private-core/
 __pycache__/
 *.pyc
+release/build/
+release/dist/
+release/spec/
+desktop_app/__pycache__/
