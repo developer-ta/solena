@@ -1,28 +1,32 @@
 # Solena
 
-Solena is a lightweight governance and workflow UI for AI-assisted software development.
+Solena is the public vitrine for an AI-assisted software development workflow.
 
-## Purpose
+## Public scope
 
-- structure ideas
-- track the evolution from dialogues to documentation
-- separate governance, versioning, lab work, and project delivery
-- keep every important step archived instead of deleted
+- a clean GUI entry point
+- a clear explanation of the workflow
+- a visible architecture for the project
+- no sensitive dialogue history
 
-## Current status
+## Private scope
 
-This repository starts with a first public GUI layer so the project can be published and shared early.
+The private core lives in `private-core/` and contains:
 
-## Structure
+- raw dialogues
+- internal notes
+- governance rules
+- versioning material
+- lab modules
 
-- `sources/` raw dialogue material and references
-- `docs/` future technical documentation
-- `project/` final project outputs
-- `labs/` experimental modules
-- `archives/` historical versions
-- `index.html` first GUI entry point
+## Public structure
 
-## Notes
+- `index.html`
+- `styles.css`
+- `app.js`
+- `README.md`
 
-The goal is not to expose every internal detail.
-The goal is to show a clean, credible public face for the project while keeping the deeper method organized inside the repository.
+## Positioning
+
+The public repo shows the project identity and its method at a high level.
+The private core keeps the deeper knowledge, drafts, and experimental material separate.
