@@ -16,11 +16,11 @@ from PyQt6.QtWidgets import (
     QMessageBox,
     QPushButton,
     QPlainTextEdit,
-    QScrollArea,
     QFrame,
     QVBoxLayout,
     QWidget,
     QGroupBox,
+    QSizePolicy,
 )
 
 
@@ -96,87 +96,127 @@ class SolenaDesktop(QMainWindow):
         root = QWidget()
         self.setCentralWidget(root)
 
-        layout = QVBoxLayout(root)
-        layout.setSpacing(18)
-        layout.setContentsMargins(24, 24, 24, 24)
+        root_layout = QHBoxLayout(root)
+        root_layout.setContentsMargins(18, 18, 18, 18)
+        root_layout.setSpacing(16)
 
-        hero = QFrame()
-        hero.setObjectName("heroCard")
-        hero_layout = QVBoxLayout(hero)
-        hero_layout.setContentsMargins(24, 24, 24, 24)
-        hero_layout.setSpacing(12)
+        sidebar = self._build_sidebar()
+        main = self._build_main_workspace()
 
-        badge = QLabel("Solena · dashboard MVP")
-        badge.setObjectName("badge")
-        title = QLabel("A structured AI dashboard for dialogue projects")
-        title.setObjectName("heroTitle")
-        subtitle = QLabel(
-            "Load the private core, import a dialogue folder, and preview a clean pipeline result before moving to refinement."
-        )
-        subtitle.setWordWrap(True)
-        subtitle.setObjectName("heroSubtitle")
-
-        hero_actions = QHBoxLayout()
-        load_core_button = QPushButton("Load GPS + Pipeline")
-        load_core_button.clicked.connect(self.load_core_guide)
-        analyze_button = QPushButton("Analyze with Solena")
-        analyze_button.setObjectName("primaryButton")
-        analyze_button.clicked.connect(self.analyze_dialogues)
-        reset_button = QPushButton("Reset")
-        reset_button.clicked.connect(self.reset_form)
-        hero_actions.addWidget(load_core_button)
-        hero_actions.addWidget(analyze_button)
-        hero_actions.addWidget(reset_button)
-        hero_actions.addStretch()
-
-        hero_layout.addWidget(badge)
-        hero_layout.addWidget(title)
-        hero_layout.addWidget(subtitle)
-        hero_layout.addLayout(hero_actions)
-
-        metrics = QHBoxLayout()
-        metrics.setSpacing(14)
-        metrics.addWidget(self._metric_card("Core", self.core_state_label))
-        metrics.addWidget(self._metric_card("Pipeline", self.pipeline_state_label))
-        metrics.addWidget(self._metric_card("Dialogues", self.dialogue_state_label))
-
-        stages = QFrame()
-        stages.setObjectName("stageStrip")
-        stages_layout = QHBoxLayout(stages)
-        stages_layout.setContentsMargins(18, 16, 18, 16)
-        stages_layout.setSpacing(12)
-        stages_layout.addWidget(self._stage_chip("import", "01 Import"))
-        stages_layout.addWidget(self._stage_chip("refine", "02 Refine"))
-        stages_layout.addWidget(self._stage_chip("lab", "03 Lab"))
-        stages_layout.addWidget(self._stage_chip("init", "04 Go / No-Go"))
-        stages_layout.addStretch()
-
-        layout.addWidget(hero)
-        layout.addLayout(metrics)
-        layout.addWidget(stages)
-
-        content = QGridLayout()
-        content.setSpacing(18)
-
-        left_column = self._build_source_column()
-        right_column = self._build_output_column()
-
-        content.addWidget(left_column, 0, 0)
-        content.addWidget(right_column, 0, 1)
-        content.setColumnStretch(0, 1)
-        content.setColumnStretch(1, 1)
-
-        layout.addLayout(content)
-
-        footer = QLabel("Solena desktop MVP · simple first version, richer features later.")
-        footer.setObjectName("footerNote")
-        layout.addWidget(footer)
+        root_layout.addWidget(sidebar)
+        root_layout.addWidget(main, 1)
 
         self.summary_box.setMinimumHeight(170)
         self.output_box.setMinimumHeight(260)
         self.summary_box.setReadOnly(True)
         self.output_box.setReadOnly(True)
         self.status_label.setWordWrap(True)
+
+    def _build_sidebar(self) -> QFrame:
+        sidebar = QFrame()
+        sidebar.setObjectName("sidebar")
+        sidebar.setFixedWidth(230)
+        sidebar_layout = QVBoxLayout(sidebar)
+        sidebar_layout.setContentsMargins(16, 16, 16, 16)
+        sidebar_layout.setSpacing(12)
+
+        brand = QFrame()
+        brand_layout = QVBoxLayout(brand)
+        brand_layout.setContentsMargins(6, 6, 6, 6)
+        brand_layout.setSpacing(4)
+        brand_title = QLabel("Solena")
+        brand_title.setObjectName("sidebarBrand")
+        brand_subtitle = QLabel("AI Governance & Orchestration")
+        brand_subtitle.setObjectName("sidebarSubtitle")
+        brand_layout.addWidget(brand_title)
+        brand_layout.addWidget(brand_subtitle)
+        sidebar_layout.addWidget(brand)
+
+        sidebar_layout.addWidget(self._nav_item("Dashboard", active=True))
+        sidebar_layout.addWidget(self._nav_item("Projects"))
+        sidebar_layout.addWidget(self._nav_item("Datasets"))
+        sidebar_layout.addWidget(self._nav_item("Pipelines"))
+        sidebar_layout.addWidget(self._nav_item("Governance"))
+        sidebar_layout.addWidget(self._nav_item("Reports"))
+        sidebar_layout.addWidget(self._nav_item("Settings"))
+        sidebar_layout.addStretch()
+
+        bottom = QFrame()
+        bottom_layout = QVBoxLayout(bottom)
+        bottom_layout.setContentsMargins(6, 6, 6, 6)
+        bottom_layout.setSpacing(10)
+        support = self._nav_item("Support")
+        account = self._nav_item("Account")
+        bottom_layout.addWidget(support)
+        bottom_layout.addWidget(account)
+        sidebar_layout.addWidget(bottom)
+
+        return sidebar
+
+    def _build_main_workspace(self) -> QFrame:
+        workspace = QFrame()
+        workspace.setObjectName("workspace")
+        workspace_layout = QVBoxLayout(workspace)
+        workspace_layout.setContentsMargins(0, 0, 0, 0)
+        workspace_layout.setSpacing(16)
+
+        header = QFrame()
+        header.setObjectName("topBar")
+        header_layout = QHBoxLayout(header)
+        header_layout.setContentsMargins(18, 16, 18, 16)
+        header_layout.setSpacing(12)
+        header_title = QLabel("Dashboard")
+        header_title.setObjectName("topBarTitle")
+        header_title.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Preferred)
+        header_status = QLabel("AI Governance & Orchestration")
+        header_status.setObjectName("topBarStatus")
+        header_layout.addWidget(header_title)
+        header_layout.addWidget(header_status)
+        header_layout.addStretch()
+
+        top_cards = QGridLayout()
+        top_cards.setSpacing(14)
+        top_cards.addWidget(self._metric_card("Core", self.core_state_label), 0, 0)
+        top_cards.addWidget(self._metric_card("Pipeline", self.pipeline_state_label), 0, 1)
+        top_cards.addWidget(self._metric_card("Dialogues", self.dialogue_state_label), 0, 2)
+
+        pipeline = QFrame()
+        pipeline.setObjectName("pipelineBar")
+        pipeline_layout = QHBoxLayout(pipeline)
+        pipeline_layout.setContentsMargins(18, 16, 18, 16)
+        pipeline_layout.setSpacing(10)
+        pipeline_layout.addWidget(self._stage_chip("import", "Import"))
+        pipeline_layout.addWidget(self._stage_chip("refine", "Refine"))
+        pipeline_layout.addWidget(self._stage_chip("lab", "Lab"))
+        pipeline_layout.addWidget(self._stage_chip("init", "Initialization"))
+        pipeline_layout.addStretch()
+
+        content = QGridLayout()
+        content.setSpacing(16)
+        content.addWidget(self._build_source_column(), 0, 0)
+        content.addWidget(self._build_output_column(), 0, 1)
+        content.setColumnStretch(0, 1)
+        content.setColumnStretch(1, 1)
+
+        workspace_layout.addWidget(header)
+        workspace_layout.addLayout(top_cards)
+        workspace_layout.addWidget(pipeline)
+        workspace_layout.addLayout(content)
+
+        footer = QLabel("Solena desktop MVP · sidebar-first dashboard for dialogue projects.")
+        footer.setObjectName("footerNote")
+        workspace_layout.addWidget(footer)
+
+        return workspace
+
+    def _nav_item(self, text: str, active: bool = False) -> QPushButton:
+        button = QPushButton(text)
+        button.setObjectName("navActive" if active else "navItem")
+        button.setCursor(Qt.CursorShape.PointingHandCursor)
+        button.setFlat(True)
+        button.setMinimumHeight(42)
+        button.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
+        return button
 
     def _build_source_column(self) -> QFrame:
         column = QFrame()
@@ -192,6 +232,10 @@ class SolenaDesktop(QMainWindow):
         title.setWordWrap(True)
         layout.addWidget(heading)
         layout.addWidget(title)
+        status_note = QLabel("Quick view: load the core, then import a dialogue folder to start the pipeline.")
+        status_note.setWordWrap(True)
+        status_note.setObjectName("sourceNote")
+        layout.addWidget(status_note)
 
         core_group = QGroupBox("Private core")
         core_layout = QFormLayout(core_group)
@@ -271,26 +315,49 @@ class SolenaDesktop(QMainWindow):
             QMainWindow {
                 background: qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 #07111f, stop:1 #050b15);
             }
-            QFrame#heroCard, QFrame#panelCard, QFrame#stageStrip {
+            QFrame#sidebar, QFrame#workspace, QFrame#panelCard, QFrame#pipelineBar, QFrame#miniCard, QFrame#topBar {
                 background: rgba(11, 20, 36, 0.82);
                 border: 1px solid rgba(125, 211, 252, 0.14);
                 border-radius: 22px;
             }
-            QLabel#badge {
-                color: #7dd3fc;
-                font-weight: 700;
-                letter-spacing: 0.10em;
-                text-transform: uppercase;
+            QFrame#sidebar {
+                min-width: 230px;
+                max-width: 230px;
             }
-            QLabel#heroTitle {
-                font-size: 30px;
+            QLabel#sidebarBrand {
+                font-size: 20px;
                 font-weight: 800;
-                letter-spacing: -0.04em;
             }
-            QLabel#heroSubtitle {
+            QLabel#sidebarSubtitle {
+                color: #9fb0c9;
+                font-size: 11px;
+                text-transform: uppercase;
+                letter-spacing: 0.12em;
+            }
+            QPushButton#navItem, QPushButton#navActive {
+                text-align: left;
+                padding-left: 14px;
+                border-radius: 14px;
+            }
+            QPushButton#navItem {
+                background: rgba(9, 16, 29, 0.72);
                 color: #a9b8d0;
-                font-size: 14px;
-                line-height: 1.6;
+                border: 1px solid rgba(125, 211, 252, 0.08);
+            }
+            QPushButton#navActive {
+                background: rgba(56, 189, 248, 0.18);
+                color: #edf4ff;
+                border: 1px solid rgba(56, 189, 248, 0.28);
+            }
+            QLabel#topBarTitle {
+                font-size: 18px;
+                font-weight: 800;
+            }
+            QLabel#topBarStatus {
+                color: #9fb0c9;
+                font-size: 12px;
+                text-transform: uppercase;
+                letter-spacing: 0.12em;
             }
             QLabel#footerNote {
                 color: #8ea1bf;
@@ -313,6 +380,11 @@ class SolenaDesktop(QMainWindow):
                 text-transform: uppercase;
                 letter-spacing: 0.14em;
                 margin-top: 4px;
+            }
+            QLabel#sourceNote {
+                color: #9fb0c9;
+                line-height: 1.6;
+                padding: 8px 2px;
             }
             QLabel#statusText {
                 color: #d9e7ff;
@@ -342,6 +414,9 @@ class SolenaDesktop(QMainWindow):
                 padding: 10px 12px;
                 color: #edf4ff;
                 selection-background-color: #38bdf8;
+            }
+            QLineEdit:focus, QPlainTextEdit:focus {
+                border-color: rgba(56, 189, 248, 0.55);
             }
             QPlainTextEdit {
                 font-family: "Cascadia Mono", "Consolas", monospace;
